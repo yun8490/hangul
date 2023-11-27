@@ -16,6 +16,14 @@ public class MainActivity extends AppCompatActivity {
     private Button btn_move;
     private String str;
 
+    public static final String [] CHOSUNG = {"ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ",
+            "ㅅ","ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"};
+    public static final String [] JUNGSUNG = {"ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ",
+            "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"};
+    public static final String [] JONGSUNG = {"", "ㄱ", "ㄲ", "ᆪ", "ᆫ", "ᆬ", "ᆭ", "ㄷ",
+            "ㄹ", "ᆰ", "ᆱ", "ᆲ", "ᆳ", "ᆴ", "ᆵ", "ᆶ", "ㅁ", "ㅂ", "ᆹ", "ᆺ", "ᆻ", "ᆼ",
+            "ᆽ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"};
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -42,29 +50,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private String splitKoeranString(String input) {
-        StringBuilder result = new StringBuilder();
 
-        for (int i = 0; i < input.length(); i++) {
-            char comVal = (char) (input.charAt(i)-0xAC00);
-
-            if (comVal >= 0 && comVal <= 11172) {
-                char uniVal = (char)comVal;
-                char cho = (char) ((((uniVal - (uniVal % 28)) / 28) / 21) + 0x1100);
-                char jung = (char) ((((uniVal - (uniVal % 28)) / 28) % 21) + 0x1161);
-                char jong = (char) ((uniVal % 28) + 0x11a7);
-
-                if (cho != 4519) {
-                    result.append(cho);
-                }
-                if (jung != 4519) {
-                    result.append(jung);
-                }
-                if (jong != 4519) {
-                    result.append(jong);
-                }
-            } else {
-                comVal = (char) (comVal + 0xAC00);
-                result.append(comVal);
+        String result = "";
+        for(int i = 0; i < input.length(); i++) {
+            int codePoint = Character.codePointAt(input, i);
+            if (codePoint >= 0xAC00 && codePoint <= 0xD79D) {
+                int startValue = codePoint - 0xAC00;
+                int jong = startValue % 28;
+                int jung = ((startValue - jong) / 28) % 21;
+                int cho = (((startValue - jong) / 28) - jung) / 21;
+                result += CHOSUNG[cho] +
+                        JUNGSUNG[jung] +
+                        JONGSUNG[jong];
+            }
+            else {
+                return "";
             }
         }
         return result.toString();
